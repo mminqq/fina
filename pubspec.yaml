@@ -53,6 +53,16 @@ dependencies:
   provider: ^6.1.1 #상태관리
   uuid: ^4.2.1 #UUID 생성
   cloud_firestore: ^4.13.2
+    qr_flutter: ^4.1.0
+  qr_code_scanner: ^1.0.1
+  google_maps_flutter: ^2.5.0
+  geolocator: 9.0.2
+  location: ^4.3.0
+  flutter_barcode_scanner: ^2.0.0
+  
+
+
+  
 
 dev_dependencies:
   flutter_test:
