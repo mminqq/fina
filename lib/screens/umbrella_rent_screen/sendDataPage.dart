@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:umbrellafinish/screens/rentING_screen.dart';
+
 
 class SendDataPage extends StatefulWidget {
-  final String scanData;
+  final int scanData;
 
   SendDataPage({required this.scanData});
 
@@ -16,10 +18,8 @@ class _SendDataPageState extends State<SendDataPage> {
   @override
   void initState() {
     super.initState();
-    // scanData로부터 추출된 값을 초기값으로 설정
-    var parsedData = parseQRData(widget.scanData);
-    umbrellaIdController = TextEditingController(text: parsedData['umbrellaId'] ?? '');
-    renterIdController = TextEditingController(text: parsedData['renterId'] ?? '');
+    umbrellaIdController = TextEditingController(text: '${widget.scanData}');
+    renterIdController = TextEditingController(text: '${widget.scanData}');
   }
 
   @override
@@ -43,20 +43,20 @@ class _SendDataPageState extends State<SendDataPage> {
             TextFormField(
               controller: umbrellaIdController,
               decoration: InputDecoration(labelText: 'Umbrella ID'),
+              keyboardType: TextInputType.number, // 숫자 입력을 위한 키보드 타입
             ),
             TextFormField(
               controller: renterIdController,
               decoration: InputDecoration(labelText: 'Renter ID'),
+              keyboardType: TextInputType.number, // 숫자 입력을 위한 키보드 타입
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // 수정된 데이터를 Firebase로 전송하거나 원하는 방식으로 활용
                 _sendDataToFirebase(
                   umbrellaIdController.text,
                   renterIdController.text,
                 );
-                // 이전 화면으로 돌아감
                 Navigator.pop(context);
               },
               child: Text('전송하기'),
@@ -67,25 +67,37 @@ class _SendDataPageState extends State<SendDataPage> {
     );
   }
 
-  // QR 데이터 파싱하는 함수 (이미 코드에 있던 함수를 그대로 사용)
-  Map<String, dynamic> parseQRData(String qrData) {
-    try {
-      // 주어진 데이터를 숫자로 변환
-      int value = int.tryParse(qrData) ?? 0; // 숫자가 아니면 0으로 처리하거나 다른 방식으로 처리
-
-      // 원하는 값에 따라 키를 지정하여 Map으로 반환
-      return {
-        'value': value,
-      };
-    } catch (e) {
-      return {}; // 오류 발생 시 빈 Map 반환
-    }
-  }
-
-
   void _sendDataToFirebase(String umbrellaId, String renterId) {
-    // Firebase로 데이터 전송
-    // FirebaseService().rentUmbrella(umbrellaId, renterId);
-    print('Umbrella ID: $umbrellaId, Renter ID: $renterId'); // 예시로 출력
+    print('Umbrella ID: $umbrellaId, Renter ID: $renterId');
+    // Firebase로 데이터 전송 등의 작업 수행
+
+
+    // 전송 완료 알림
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('전송 완료'),
+          content: Text('전송이 완료 되었습니다.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // '전송하기'를 누르면 1초 후 rentING_screen으로 이동
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                Future.delayed(Duration(seconds: 1), () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => rentIngScreen()), // RentINGScreen 클래스로 이동
+                  );
+                });
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
+
+
