@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import '../umbrella_rent_screen/services/firebase_service.dart';
-import '../screens/home_screen/home_screen.dart'; //페이지 이동
+import '../services/firebase_service.dart';
+import '../screens/returnDataPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
@@ -47,55 +47,16 @@ class _QRCodeReturnScannerState extends State<QRCodeReturnScanner> {
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) async {
-      // 추출된 데이터
-      print(scanData);
-      await FirebaseService().rentUmbrella('umbrellaId', 'userId');
+      int qrData = scanData.code as int; // 혹은 int qrData = int.parse(scanData.code);
 
-      bool isReturnSuccessful = true;
-
-      if (isReturnSuccessful) {
-
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("반납 성공했습니다"),
-              actions: [
-                ElevatedButton(
-                  child: Text("확인"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("반납 실패했습니다"),
-              actions: [
-                ElevatedButton(
-                  child: Text("확인"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // Add any additional logic after failed return
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ReturnDataPage(
+            scanData: qrData, // 수정된 부분
+          ),
+        ),
+      );
     });
   }
 
