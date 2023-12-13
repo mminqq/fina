@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import '../umbrella_rent_screen/services/firebase_service.dart';
-import '../screens/umbrella_rent_screen/rentING_screen.dart'; //페이지 이동
-
+import 'package:umbrellafinish/screens/sendDataPage.dart';
 
 class QRCodeScannerScreen extends StatefulWidget {
   @override
@@ -45,59 +43,18 @@ class _QRCodeScannerScreenState extends State<QRCodeScannerScreen> {
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) async {
-      print(scanData);
-      await FirebaseService().rentUmbrella('umbrellaId', 'userId');
+      int qrData = scanData.code as int; // 혹은 int qrData = int.parse(scanData.code);
 
-      bool isRentSuccessful = true;
-
-      if (isRentSuccessful) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("대여 성공했습니다"),
-              actions: [
-                ElevatedButton(
-                  child: Text("확인"),
-                  onPressed: () {
-                    Navigator.of(context).pop(); // 현재 다이얼로그를 닫음
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => rentIngScreen(), // RentingScreen으로 이동
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-      else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("대여 실패했습니다"),
-              actions: [
-                ElevatedButton(
-                  child: Text("확인"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-
-
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SendDataPage(
+            scanData: qrData, // 수정된 부분
+          ),
+        ),
+      );
     });
   }
-
-
 
   @override
   void dispose() {
@@ -105,4 +62,3 @@ class _QRCodeScannerScreenState extends State<QRCodeScannerScreen> {
     super.dispose();
   }
 }
-
